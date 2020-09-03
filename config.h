@@ -80,9 +80,9 @@ static const char *rightcmd[] = { "/home/jake/.scripts/autorandr/right.sh", NULL
 static const char *slockcmd[] = { "slock", NULL };
 static const char *filescmd[] = { "konsole", "-e", "lf", "~", NULL };
 static const char *vmcmd[] = { "/home/jake/.scripts/vm.sh", NULL };
-static const char *datecmd[] = { "/home/jake/.scripts/date.sh", NULL };
 static const char *emacscmd[] = { "emacs", NULL };
 static const char *surfcmd[] = { "surf", NULL };
+static const char *mancmd[] = { "/home/jake/.scripts/man.sh", NULL }; 
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -130,7 +130,7 @@ static Key keys[] = {
 	{ MODKEY,			XK_F11,	   spawn,	   {.v = bothcmd } },
 	{ MODKEY,			XK_F12,	   spawn,	   {.v = rightcmd } },
 	{ MODKEY,			XK_F9,	   spawn,	   {.v = vmcmd } },
-	{ MODKEY,			XK_F1,	   spawn,	   {.v = datecmd } },
+	{ MODKEY,			XK_F1,	   spawn,	   {.v = mancmd } },
 	{ MODKEY,                       XK_p,      spawn,          {.v = emacscmd } },
 	{ MODKEY|ShiftMask,             XK_w,      spawn,          {.v = surfcmd } },
 	{ MODKEY|ControlMask|ShiftMask, XK_q,      quit,           {1} }, 
