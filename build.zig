@@ -27,19 +27,23 @@ const CFLAGS = [_][]const u8{
 } ++ CPPFLAGS;
 const LDFLAG = LIBS;
 
-const SRC = [_][]const u8{ "drw.c", "dwm.c", "util.c" };
+const SRC = [_][]const u8{ "src/drw.c", "src/dwm.c", "src/util.c" };
 
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = .ReleaseSmall;
     const bin = b.addExecutable(.{
         .name = "dwm",
+        .root_source_file = .{ .path = "src/main.c" },
         .target = target,
         .optimize = optimize,
     });
     bin.addCSourceFiles(&SRC, &CFLAGS);
 
-    bin.addAnonymousModule("config.h", .{ .source_file = .{ .path = "config.h" } });
+    const conf_mod = b.addModule("config.h", .{ .source_file = .{ .path = "config.h" } });
+
+    bin.addModule("config", conf_mod);
+    bin.addIncludePath(.{ .path = b.pathFromRoot("") });
     bin.addLibraryPath(X11LIB);
     for (INCS) |path| {
         bin.addIncludePath(path);
@@ -53,12 +57,12 @@ pub fn build(b: *std.Build) !void {
         "dwm",
     );
     const install_man = b.addInstallFileWithDir(
-        .{ .path = "dwm.1" },
+        .{ .path = "assets/dwm.1" },
         .{ .custom = b.pathJoin(&.{ MANPREFIX, "man1" }) },
         "dwm.1",
     );
     const install_desktop = b.addInstallFileWithDir(
-        .{ .path = "dwm.desktop" },
+        .{ .path = "assets/dwm.desktop" },
         .{ .custom = b.pathJoin(&.{"usr/share/xsessions"}) },
         "dwm.desktop",
     );
