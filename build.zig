@@ -34,9 +34,10 @@ pub fn build(b: *std.Build) !void {
     const optimize = .ReleaseSmall;
     const bin = b.addExecutable(.{
         .name = "dwm",
-        .root_source_file = .{ .path = "src/main.c" },
+        .root_source_file = .{ .path = "src/main.zig" },
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     bin.addCSourceFiles(&SRC, &CFLAGS);
 
@@ -45,6 +46,7 @@ pub fn build(b: *std.Build) !void {
     bin.addModule("config", conf_mod);
     bin.addIncludePath(.{ .path = b.pathFromRoot("") });
     bin.addLibraryPath(X11LIB);
+    bin.addIncludePath(.{ .path = "src" });
     for (INCS) |path| {
         bin.addIncludePath(path);
     }
