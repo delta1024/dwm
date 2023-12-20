@@ -18,11 +18,12 @@ pub fn main() !void {
     defer args.deinit();
 
     d.check_ussage(@truncate(@as(isize, @bitCast(args.len))), args.ptr);
-    d.checkotherwm();
-    d.setup();
-    d.scan();
-    d.run();
-    d.cleanup();
-    _ = d.XCloseDisplay(d.dpy);
+    var state = d.init_state();
+    _ = d.checkotherwm(state);
+    d.setup(state);
+    d.scan(state);
+    d.run(state);
+    d.cleanup(state);
+    d.free_state(state);
     std.process.exit(0);
 }
