@@ -32,6 +32,19 @@ const SRC = [_][]const u8{ "src/drw.c", "src/dwm.c", "src/util.c" };
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = .ReleaseSmall;
+    const drw_mod = b.addModule("drw", .{ .source_file = .{ .path = "src/drw.zig" } });
+    const util_mod = b.addModule("util", .{ .source_file = .{ .path = "src/util.zig" } });
+    const dwm_mod = b.addModule(
+        "dwm",
+        .{
+            .source_file = .{ .path = "src/dwm.zig" },
+            .dependencies = &.{
+                .{ .name = "drw", .module = drw_mod },
+                .{ .name = "util", .module = util_mod },
+            },
+        },
+    );
+
     const bin = b.addExecutable(.{
         .name = "dwm",
         .root_source_file = .{ .path = "src/main.zig" },
@@ -40,6 +53,9 @@ pub fn build(b: *std.Build) !void {
         .link_libc = true,
     });
     bin.addCSourceFiles(&SRC, &CFLAGS);
+    bin.addModule("drw", drw_mod);
+    bin.addModule("dwm", dwm_mod);
+    bin.addModule("util", util_mod);
 
     const conf_mod = b.addModule("config.h", .{ .source_file = .{ .path = "config.h" } });
 
