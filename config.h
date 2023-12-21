@@ -1,5 +1,8 @@
 /* See LICENSE file for copyright and license details. */
+#ifndef dwm_config_h
+#define dwm_config_h
 
+#include "src/dwm.h"
 /* appearance */
 static const unsigned int borderpx  = 1;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
@@ -114,3 +117,4 @@ static const Button buttons[] = {
 	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
 
+#endif // dwm_config_h
