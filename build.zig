@@ -27,6 +27,15 @@ const CFLAGS = [_][]const u8{
 } ++ CPPFLAGS;
 const LDFLAG = LIBS;
 
+const XEPHYR_CMD = [_][]const u8{
+    "Xephyr",
+    "-br",
+    "-ac",
+    "-noreset",
+    "-screen",
+    "800x600",
+    ":1",
+};
 const SRC = [_][]const u8{ "src/drw.c", "src/dwm.c", "src/util.c" };
 
 pub fn build(b: *std.Build) !void {
@@ -37,6 +46,7 @@ pub fn build(b: *std.Build) !void {
         .root_source_file = .{ .path = "src/main.c" },
         .target = target,
         .optimize = optimize,
+        .link_libc = true,
     });
     bin.addCSourceFiles(&SRC, &CFLAGS);
 
@@ -82,4 +92,12 @@ pub fn build(b: *std.Build) !void {
         const rm_cmd = b.addRemoveDirTree(dir);
         clean_step.dependOn(&rm_cmd.step);
     }
+
+    //    const run_xephyr_cmd = b.addSystemCommand(&XEPHYR_CMD);
+
+    const run_wm_cmd = b.addRunArtifact(bin);
+
+    run_wm_cmd.setEnvironmentVariable("DISPLAY", ":1");
+    const test_step = b.step("test", "test the application");
+    test_step.dependOn(&run_wm_cmd.step);
 }
