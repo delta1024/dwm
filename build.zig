@@ -41,6 +41,14 @@ const SRC = [_][]const u8{ "src/drw.c", "src/dwm.c", "src/util.c" };
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
     const optimize = .ReleaseSmall;
+    const drw_mod = b.addObject(.{
+        .name = "drw",
+        .root_source_file = .{ .path = "src/drw.zig" },
+        .optimize = optimize,
+        .target = target,
+        .link_libc = true,
+    });
+
     const bin = b.addExecutable(.{
         .name = "dwm",
         .root_source_file = .{ .path = "src/main.c" },
@@ -48,17 +56,16 @@ pub fn build(b: *std.Build) !void {
         .optimize = optimize,
         .link_libc = true,
     });
+    bin.addObject(drw_mod);
     bin.addCSourceFiles(&SRC, &CFLAGS);
-
-    const conf_mod = b.addModule("config.h", .{ .source_file = .{ .path = "config.h" } });
-
-    bin.addModule("config", conf_mod);
     bin.addIncludePath(.{ .path = b.pathFromRoot("") });
     bin.addLibraryPath(X11LIB);
     for (INCS) |path| {
+        drw_mod.addIncludePath(path);
         bin.addIncludePath(path);
     }
     for (LIBS) |lib| {
+        drw_mod.linkSystemLibrary(lib);
         bin.linkSystemLibrary(lib);
     }
     const install_step = b.addInstallFileWithDir(

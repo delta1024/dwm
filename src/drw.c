@@ -60,98 +60,98 @@ utf8decode(const char *c, long *u, size_t clen)
 	return len;
 }
 
-Drw *
-drw_create(Display *dpy, int screen, Window root, unsigned int w, unsigned int h)
-{
-	Drw *drw = ecalloc(1, sizeof(Drw));
+/* Drw * */
+/* drw_create(Display *dpy, int screen, Window root, unsigned int w, unsigned int h) */
+/* { */
+/* 	Drw *drw = ecalloc(1, sizeof(Drw)); */
 
-	drw->dpy = dpy;
-	drw->screen = screen;
-	drw->root = root;
-	drw->w = w;
-	drw->h = h;
-	drw->drawable = XCreatePixmap(dpy, root, w, h, DefaultDepth(dpy, screen));
-	drw->gc = XCreateGC(dpy, root, 0, NULL);
-	XSetLineAttributes(dpy, drw->gc, 1, LineSolid, CapButt, JoinMiter);
+/* 	drw->dpy = dpy; */
+/* 	drw->screen = screen; */
+/* 	drw->root = root; */
+/* 	drw->w = w; */
+/* 	drw->h = h; */
+/* 	drw->drawable = XCreatePixmap(dpy, root, w, h, DefaultDepth(dpy, screen)); */
+/* 	drw->gc = XCreateGC(dpy, root, 0, NULL); */
+/* 	XSetLineAttributes(dpy, drw->gc, 1, LineSolid, CapButt, JoinMiter); */
 
-	return drw;
-}
+/* 	return drw; */
+/* } */
 
-void
-drw_resize(Drw *drw, unsigned int w, unsigned int h)
-{
-	if (!drw)
-		return;
+/* void */
+/* drw_resize(Drw *drw, unsigned int w, unsigned int h) */
+/* { */
+/* 	if (!drw) */
+/* 		return; */
 
-	drw->w = w;
-	drw->h = h;
-	if (drw->drawable)
-		XFreePixmap(drw->dpy, drw->drawable);
-	drw->drawable = XCreatePixmap(drw->dpy, drw->root, w, h, DefaultDepth(drw->dpy, drw->screen));
-}
+/* 	drw->w = w; */
+/* 	drw->h = h; */
+/* 	if (drw->drawable) */
+/* 		XFreePixmap(drw->dpy, drw->drawable); */
+/* 	drw->drawable = XCreatePixmap(drw->dpy, drw->root, w, h, DefaultDepth(drw->dpy, drw->screen)); */
+/* } */
 
-void
-drw_free(Drw *drw)
-{
-	XFreePixmap(drw->dpy, drw->drawable);
-	XFreeGC(drw->dpy, drw->gc);
-	drw_fontset_free(drw->fonts);
-	free(drw);
-}
+/* void */
+/* drw_free(Drw *drw) */
+/* { */
+/* 	XFreePixmap(drw->dpy, drw->drawable); */
+/* 	XFreeGC(drw->dpy, drw->gc); */
+/* 	drw_fontset_free(drw->fonts); */
+/* 	free(drw); */
+/* } */
 
 /* This function is an implementation detail. Library users should use
  * drw_fontset_create instead.
  */
-static Fnt *
-xfont_create(Drw *drw, const char *fontname, FcPattern *fontpattern)
-{
-	Fnt *font;
-	XftFont *xfont = NULL;
-	FcPattern *pattern = NULL;
+extern Fnt * xfont_create(Drw *drw, const char *fontname, FcPattern *fontpattern);
+/* static Fnt * */
+/* xfont_create(Drw *drw, const char *fontname, FcPattern *fontpattern) */
+/* { */
+/* 	Fnt *font; */
+/* 	XftFont *xfont = NULL; */
+/* 	FcPattern *pattern = NULL; */
 
-	if (fontname) {
-		/* Using the pattern found at font->xfont->pattern does not yield the
-		 * same substitution results as using the pattern returned by
-		 * FcNameParse; using the latter results in the desired fallback
-		 * behaviour whereas the former just results in missing-character
-		 * rectangles being drawn, at least with some fonts. */
-		if (!(xfont = XftFontOpenName(drw->dpy, drw->screen, fontname))) {
-			fprintf(stderr, "error, cannot load font from name: '%s'\n", fontname);
-			return NULL;
-		}
-		if (!(pattern = FcNameParse((FcChar8 *) fontname))) {
-			fprintf(stderr, "error, cannot parse font name to pattern: '%s'\n", fontname);
-			XftFontClose(drw->dpy, xfont);
-			return NULL;
-		}
-	} else if (fontpattern) {
-		if (!(xfont = XftFontOpenPattern(drw->dpy, fontpattern))) {
-			fprintf(stderr, "error, cannot load font from pattern.\n");
-			return NULL;
-		}
-	} else {
-		die("no font specified.");
-	}
+/* 	if (fontname) { */
+/* 		/\* Using the pattern found at font->xfont->pattern does not yield the */
+/* 		 * same substitution results as using the pattern returned by */
+/* 		 * FcNameParse; using the latter results in the desired fallback */
+/* 		 * behaviour whereas the former just results in missing-character */
+/* 		 * rectangles being drawn, at least with some fonts. *\/ */
+/* 		if (!(xfont = XftFontOpenName(drw->dpy, drw->screen, fontname))) { */
+/* 			fprintf(stderr, "error, cannot load font from name: '%s'\n", fontname); */
+/* 			return NULL; */
+/* 		} */
+/* 		if (!(pattern = FcNameParse((FcChar8 *) fontname))) { */
+/* 			fprintf(stderr, "error, cannot parse font name to pattern: '%s'\n", fontname); */
+/* 			XftFontClose(drw->dpy, xfont); */
+/* 			return NULL; */
+/* 		} */
+/* 	} else if (fontpattern) { */
+/* 		if (!(xfont = XftFontOpenPattern(drw->dpy, fontpattern))) { */
+/* 			fprintf(stderr, "error, cannot load font from pattern.\n"); */
+/* 			return NULL; */
+/* 		} */
+/* 	} else { */
+/* 		die("no font specified."); */
+/* 	} */
 
-	font = ecalloc(1, sizeof(Fnt));
-	font->xfont = xfont;
-	font->pattern = pattern;
-	font->h = xfont->ascent + xfont->descent;
-	font->dpy = drw->dpy;
+/* 	font = ecalloc(1, sizeof(Fnt)); */
+/* 	font->xfont = xfont; */
+/* 	font->pattern = pattern; */
+/* 	font->h = xfont->ascent + xfont->descent; */
+/* 	font->dpy = drw->dpy; */
 
-	return font;
-}
+/* 	return font; */
+/* } */
 
-static void
-xfont_free(Fnt *font)
-{
-	if (!font)
-		return;
-	if (font->pattern)
-		FcPatternDestroy(font->pattern);
-	XftFontClose(font->dpy, font->xfont);
-	free(font);
-}
+extern void xfont_free(Fnt *font);
+/* { */
+/* 	if (!font) */
+/* 		return; */
+/* 	if (font->pattern) */
+/* 		FcPatternDestroy(font->pattern); */
+/* 	XftFontClose(font->dpy, font->xfont); */
+/* 	free(font); */
+/* } */
 
 Fnt*
 drw_fontset_create(Drw* drw, const char *fonts[], size_t fontcount)
