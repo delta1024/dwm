@@ -141,6 +141,18 @@ pub const Drw = extern struct {
             font_.free();
         }
     }
+    pub fn curCreate(drw: ?*Drw, shape: c_int) callconv(.C) ?*Cur {
+        if (drw == null) return null;
+        var cur = allocator.create(Cur) catch return null;
+        cur.*.cursor = x11.XCreateFontCursor(drw.?.*.dpy, @bitCast(shape));
+        return cur;
+    }
+    pub fn curFree(drw: ?*Drw, cursor: ?*Cur) callconv(.C) void {
+        if (cursor) |cur| {
+            _ = x11.XFreeCursor(drw.?.*.dpy, cur.*.cursor);
+            allocator.destroy(cur);
+        }
+    }
 };
 comptime {
     @export(Drw.create, .{ .name = "drw_create" });
@@ -150,4 +162,6 @@ comptime {
     @export(Fnt.free, .{ .name = "xfont_free" });
     @export(Drw.fontsetCreate, .{ .name = "drw_fontset_create" });
     @export(Drw.fontsetFree, .{ .name = "drw_fontset_free" });
+    @export(Drw.curCreate, .{ .name = "drw_cur_create" });
+    @export(Drw.curFree, .{ .name = "drw_cur_free" });
 }

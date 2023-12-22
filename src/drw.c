@@ -426,25 +426,25 @@ drw_font_getexts(Fnt *font, const char *text, unsigned int len, unsigned int *w,
 		*h = font->h;
 }
 
-Cur *
-drw_cur_create(Drw *drw, int shape)
-{
-	Cur *cur;
+/* Cur * */
+/* drw_cur_create(Drw *drw, int shape) */
+/* { */
+/* 	Cur *cur; */
 
-	if (!drw || !(cur = ecalloc(1, sizeof(Cur))))
-		return NULL;
+/* 	if (!drw || !(cur = ecalloc(1, sizeof(Cur)))) */
+/* 		return NULL; */
 
-	cur->cursor = XCreateFontCursor(drw->dpy, shape);
+/* 	cur->cursor = XCreateFontCursor(drw->dpy, shape); */
 
-	return cur;
-}
+/* 	return cur; */
+/* } */
 
-void
-drw_cur_free(Drw *drw, Cur *cursor)
-{
-	if (!cursor)
-		return;
+/* void */
+/* drw_cur_free(Drw *drw, Cur *cursor) */
+/* { */
+/* 	if (!cursor) */
+/* 		return; */
 
-	XFreeCursor(drw->dpy, cursor->cursor);
-	free(cursor);
-}
+/* 	XFreeCursor(drw->dpy, cursor->cursor); */
+/* 	free(cursor); */
+/* } */
