@@ -153,32 +153,32 @@ extern void xfont_free(Fnt *font);
 /* 	free(font); */
 /* } */
 
-Fnt*
-drw_fontset_create(Drw* drw, const char *fonts[], size_t fontcount)
-{
-	Fnt *cur, *ret = NULL;
-	size_t i;
+/* Fnt* */
+/* drw_fontset_create(Drw* drw, const char *fonts[], size_t fontcount) */
+/* { */
+/* 	Fnt *cur, *ret = NULL; */
+/* 	size_t i; */
 
-	if (!drw || !fonts)
-		return NULL;
+/* 	if (!drw || !fonts) */
+/* 		return NULL; */
 
-	for (i = 1; i <= fontcount; i++) {
-		if ((cur = xfont_create(drw, fonts[fontcount - i], NULL))) {
-			cur->next = ret;
-			ret = cur;
-		}
-	}
-	return (drw->fonts = ret);
-}
+/* 	for (i = 1; i <= fontcount; i++) { */
+/* 		if ((cur = xfont_create(drw, fonts[fontcount - i], NULL))) { */
+/* 			cur->next = ret; */
+/* 			ret = cur; */
+/* 		} */
+/* 	} */
+/* 	return (drw->fonts = ret); */
+/* } */
 
-void
-drw_fontset_free(Fnt *font)
-{
-	if (font) {
-		drw_fontset_free(font->next);
-		xfont_free(font);
-	}
-}
+/* void */
+/* drw_fontset_free(Fnt *font) */
+/* { */
+/* 	if (font) { */
+/* 		drw_fontset_free(font->next); */
+/* 		xfont_free(font); */
+/* 	} */
+/* } */
 
 void
 drw_clr_create(Drw *drw, Clr *dest, const char *clrname)

@@ -122,6 +122,25 @@ pub const Drw = extern struct {
         drw_fontset_free(drw.?.*.fonts);
         allocator.destroy(drw.?);
     }
+    pub fn fontsetCreate(drw: ?*Drw, fonts: ?[*][*:0]const u8, font_count: usize) callconv(.C) ?*Fnt {
+        if ((drw == null) or (fonts == null)) return null;
+        var i: usize = 0;
+        var ret: ?*Fnt = null;
+        while (i < font_count) : (i += 1) {
+            if (Fnt.create(drw, fonts.?[i], null)) |cur| {
+                cur.next = ret;
+                ret = cur;
+            }
+        }
+        drw.?.*.fonts = ret;
+        return ret;
+    }
+    pub fn fontsetFree(font: ?*Fnt) callconv(.C) void {
+        if (font) |font_| {
+            Drw.fontsetFree(font_.*.next);
+            font_.free();
+        }
+    }
 };
 comptime {
     @export(Drw.create, .{ .name = "drw_create" });
@@ -129,4 +148,6 @@ comptime {
     @export(Drw.resize, .{ .name = "drw_resize" });
     @export(Fnt.create, .{ .name = "xfont_create" });
     @export(Fnt.free, .{ .name = "xfont_free" });
+    @export(Drw.fontsetCreate, .{ .name = "drw_fontset_create" });
+    @export(Drw.fontsetFree, .{ .name = "drw_fontset_free" });
 }
