@@ -153,6 +153,18 @@ pub const Drw = extern struct {
             allocator.destroy(cur);
         }
     }
+    pub fn clrCreate(drw: ?*Drw, dest: ?*Clr, clrname: ?[*:0]const u8) callconv(.C) void {
+        if (drw == null or dest == null or clrname == null) return;
+
+        if (x11.XftColorAllocName(drw.?.*.dpy, x11.DefaultVisual(drw.?.*.dpy, drw.?.*.screen), x11.DefaultColormap(drw.?.*.dpy, drw.?.*.screen), clrname, dest) == @intFromBool(false)) {
+            const stderr_file = std.io.getStdErr();
+            var bw = std.io.bufferedWriter(stderr_file.writer());
+            const stderr = bw.writer();
+            stderr.print("error, cannot allocate color '{s}'\n", .{clrname.?}) catch {};
+            bw.flush() catch {};
+            std.process.exit(1);
+        }
+    }
 };
 comptime {
     @export(Drw.create, .{ .name = "drw_create" });
@@ -164,4 +176,5 @@ comptime {
     @export(Drw.fontsetFree, .{ .name = "drw_fontset_free" });
     @export(Drw.curCreate, .{ .name = "drw_cur_create" });
     @export(Drw.curFree, .{ .name = "drw_cur_free" });
+    @export(Drw.clrCreate, .{ .name = "drw_clr_create" });
 }

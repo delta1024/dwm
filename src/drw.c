@@ -180,17 +180,17 @@ extern void xfont_free(Fnt *font);
 /* 	} */
 /* } */
 
-void
-drw_clr_create(Drw *drw, Clr *dest, const char *clrname)
-{
-	if (!drw || !dest || !clrname)
-		return;
+/* void */
+/* drw_clr_create(Drw *drw, Clr *dest, const char *clrname) */
+/* { */
+/* 	if (!drw || !dest || !clrname) */
+/* 		return; */
 
-	if (!XftColorAllocName(drw->dpy, DefaultVisual(drw->dpy, drw->screen),
-	                       DefaultColormap(drw->dpy, drw->screen),
-	                       clrname, dest))
-		die("error, cannot allocate color '%s'", clrname);
-}
+/* 	if (!XftColorAllocName(drw->dpy, DefaultVisual(drw->dpy, drw->screen), */
+/* 	                       DefaultColormap(drw->dpy, drw->screen), */
+/* 	                       clrname, dest)) */
+/* 		die("error, cannot allocate color '%s'", clrname); */
+/* } */
 
 /* Wrapper to create color schemes. The caller has to call free(3) on the
  * returned color scheme when done using it. */
