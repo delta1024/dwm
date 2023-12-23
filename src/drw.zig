@@ -191,7 +191,33 @@ pub const Drw = extern struct {
     pub fn setScheme(drw: ?*Drw, scheme: ?[*]Clr) callconv(.C) void {
         if (drw) |d| d.scheme = scheme;
     }
+    pub fn rect(
+        drw: ?*Drw,
+        x: c_int,
+        y: c_int,
+        w: c_uint,
+        h: c_uint,
+        filled: c_int,
+        invert: c_int,
+    ) callconv(.C) void {
+        if (drw) |d| {
+            if (d.scheme == null) return;
+        } else return;
+        _ = x11.XSetForeground(drw.?.*.dpy, drw.?.*.gc, if (invert != @intFromBool(false))
+            drw.?.*.scheme.?[
+                @intFromEnum(ClrScmIdx.bg)
+            ].pixel
+        else
+            drw.?.*.scheme.?[
+                @intFromEnum(ClrScmIdx.fg)
+            ].pixel);
+        _ = if (filled != @intFromBool(false))
+            x11.XFillRectangle(drw.?.*.dpy, drw.?.*.drawable, drw.?.*.gc, x, y, w, h)
+        else
+            x11.XDrawRectangle(drw.?.*.dpy, drw.?.*.drawable, drw.?.*.gc, x, y, w - 1, h - 1);
+    }
 };
+
 comptime {
     @export(Drw.create, .{ .name = "drw_create" });
     @export(Drw.free, .{ .name = "drw_free" });
@@ -206,4 +232,5 @@ comptime {
     @export(Drw.scmCreate, .{ .name = "drw_scm_create" });
     @export(Drw.setScheme, .{ .name = "drw_setscheme" });
     @export(Drw.setFontSet, .{ .name = "drw_setfontset" });
+    @export(Drw.rect, .{ .name = "drw_rect" });
 }
