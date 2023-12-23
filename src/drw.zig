@@ -8,10 +8,14 @@ const allocator = std.heap.page_allocator;
 pub const Cursor = x11.Cursor;
 pub const Display = x11.Display;
 pub const XftFont = x11.XftFont;
+pub const XftColor = x11.XftColor;
 pub const FcPattern = x11.FcPattern;
 pub const Window = x11.Window;
 pub const Drawable = x11.Drawable;
 pub const GC = x11.GC;
+const util = @cImport({
+    @cInclude("util.h");
+});
 
 pub const Cur = extern struct {
     cursor: Cursor,
@@ -51,7 +55,7 @@ pub const Fnt = extern struct {
                 return null;
             }
         } else {
-            @panic("no font specified");
+            util.die("no font specified.");
         }
 
         var font = allocator.create(Fnt) catch @panic("alloc");
@@ -88,7 +92,7 @@ pub const Drw = extern struct {
     root: Window,
     drawable: Drawable,
     gc: GC,
-    scheme: ?*Clr = undefined,
+    scheme: ?[*]Clr = undefined,
     fonts: ?*Fnt = undefined,
     pub fn create(dpy: ?*Display, screen: c_int, win: Window, w: c_uint, h: c_uint) callconv(.C) ?*Drw {
         const drw = allocator.create(Drw) catch @panic("drw_create");
@@ -156,14 +160,30 @@ pub const Drw = extern struct {
     pub fn clrCreate(drw: ?*Drw, dest: ?*Clr, clrname: ?[*:0]const u8) callconv(.C) void {
         if (drw == null or dest == null or clrname == null) return;
 
-        if (x11.XftColorAllocName(drw.?.*.dpy, x11.DefaultVisual(drw.?.*.dpy, drw.?.*.screen), x11.DefaultColormap(drw.?.*.dpy, drw.?.*.screen), clrname, dest) == @intFromBool(false)) {
-            const stderr_file = std.io.getStdErr();
-            var bw = std.io.bufferedWriter(stderr_file.writer());
-            const stderr = bw.writer();
-            stderr.print("error, cannot allocate color '{s}'\n", .{clrname.?}) catch {};
-            bw.flush() catch {};
-            std.process.exit(1);
+        if (x11.XftColorAllocName(
+            drw.?.*.dpy,
+            x11.DefaultVisual(
+                drw.?.*.dpy,
+                drw.?.*.screen,
+            ),
+            x11.DefaultColormap(
+                drw.?.*.dpy,
+                drw.?.*.screen,
+            ),
+            clrname,
+            dest,
+        ) == @intFromBool(false)) {
+            util.die("error, cannot allocate color '%s'\n", clrname);
         }
+    }
+    pub fn scmCreate(_drw: ?*Drw, _clrnames: ?[*][*:0]const u8, clrcount: usize) callconv(.C) ?[*]Clr {
+        var drw = _drw orelse return null;
+        var clrnames = _clrnames orelse return null;
+
+        if (clrcount < 2) return null;
+        var ret: [*]Clr = @ptrCast(@alignCast((util.ecalloc(clrcount, @sizeOf(XftColor)) orelse return null)));
+        for (clrnames[0..clrcount], ret) |c, *r| drw.clrCreate(r, c);
+        return ret;
     }
 };
 comptime {
@@ -177,4 +197,5 @@ comptime {
     @export(Drw.curCreate, .{ .name = "drw_cur_create" });
     @export(Drw.curFree, .{ .name = "drw_cur_free" });
     @export(Drw.clrCreate, .{ .name = "drw_clr_create" });
+    @export(Drw.scmCreate, .{ .name = "drw_scm_create" });
 }

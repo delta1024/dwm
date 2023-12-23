@@ -48,7 +48,7 @@ pub fn build(b: *std.Build) !void {
         .target = target,
         .link_libc = true,
     });
-
+    drw_mod.addIncludePath(.{ .path = "src" });
     const bin = b.addExecutable(.{
         .name = "dwm",
         .root_source_file = .{ .path = "src/main.c" },
