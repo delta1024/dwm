@@ -185,6 +185,12 @@ pub const Drw = extern struct {
         for (clrnames[0..clrcount], ret) |c, *r| drw.clrCreate(r, c);
         return ret;
     }
+    pub fn setFontSet(drw: ?*Drw, set: ?*Fnt) callconv(.C) void {
+        if (drw) |d| d.fonts = set;
+    }
+    pub fn setScheme(drw: ?*Drw, scheme: ?[*]Clr) callconv(.C) void {
+        if (drw) |d| d.scheme = scheme;
+    }
 };
 comptime {
     @export(Drw.create, .{ .name = "drw_create" });
@@ -198,4 +204,6 @@ comptime {
     @export(Drw.curFree, .{ .name = "drw_cur_free" });
     @export(Drw.clrCreate, .{ .name = "drw_clr_create" });
     @export(Drw.scmCreate, .{ .name = "drw_scm_create" });
+    @export(Drw.setScheme, .{ .name = "drw_setscheme" });
+    @export(Drw.setFontSet, .{ .name = "drw_setfontset" });
 }

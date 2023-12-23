@@ -209,19 +209,19 @@ extern void xfont_free(Fnt *font);
 /* 	return ret; */
 /* } */
 
-void
-drw_setfontset(Drw *drw, Fnt *set)
-{
-	if (drw)
-		drw->fonts = set;
-}
+/* void */
+/* drw_setfontset(Drw *drw, Fnt *set) */
+/* { */
+/* 	if (drw) */
+/* 		drw->fonts = set; */
+/* } */
 
-void
-drw_setscheme(Drw *drw, Clr *scm)
-{
-	if (drw)
-		drw->scheme = scm;
-}
+/* void */
+/* drw_setscheme(Drw *drw, Clr *scm) */
+/* { */
+/* 	if (drw) */
+/* 		drw->scheme = scm; */
+/* } */
 
 void
 drw_rect(Drw *drw, int x, int y, unsigned int w, unsigned int h, int filled, int invert)
