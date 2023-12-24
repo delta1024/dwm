@@ -394,22 +394,22 @@ no_match:
 /* 	XSync(drw->dpy, False); */
 /* } */
 
-unsigned int
-drw_fontset_getwidth(Drw *drw, const char *text)
-{
-	if (!drw || !drw->fonts || !text)
-		return 0;
-	return drw_text(drw, 0, 0, 0, 0, 0, text, 0);
-}
+/* unsigned int */
+/* drw_fontset_getwidth(Drw *drw, const char *text) */
+/* { */
+/* 	if (!drw || !drw->fonts || !text) */
+/* 		return 0; */
+/* 	return drw_text(drw, 0, 0, 0, 0, 0, text, 0); */
+/* } */
 
-unsigned int
-drw_fontset_getwidth_clamp(Drw *drw, const char *text, unsigned int n)
-{
-	unsigned int tmp = 0;
-	if (drw && drw->fonts && text && n)
-		tmp = drw_text(drw, 0, 0, 0, 0, 0, text, n);
-	return MIN(n, tmp);
-}
+/* unsigned int */
+/* drw_fontset_getwidth_clamp(Drw *drw, const char *text, unsigned int n) */
+/* { */
+/* 	unsigned int tmp = 0; */
+/* 	if (drw && drw->fonts && text && n) */
+/* 		tmp = drw_text(drw, 0, 0, 0, 0, 0, text, n); */
+/* 	return MIN(n, tmp); */
+/* } */
 
 void
 drw_font_getexts(Fnt *font, const char *text, unsigned int len, unsigned int *w, unsigned int *h)

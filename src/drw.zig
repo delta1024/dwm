@@ -67,6 +67,13 @@ pub const Fnt = extern struct {
         };
         return font;
     }
+    pub fn fontGetExts(self: ?*Fnt, text: ?[*:0]const u8, len: c_uint, w: ?*c_uint, h: ?*c_uint) callconv(.C) void {
+        _ = h;
+        _ = w;
+        _ = len;
+        _ = text;
+        _ = self;
+    }
     fn free(self: ?*Fnt) callconv(.C) void {
         if (self) |_| {
             if (self.?.*.pattern) |_| {
@@ -223,8 +230,21 @@ pub const Drw = extern struct {
         _ = x11.XCopyArea(drw.*.dpy, drw.*.drawable, win, drw.*.gc, x, y, w, h, x, y);
         _ = x11.XSync(drw.*.dpy, x11.False);
     }
+    pub fn fontsetGetWidth(self: ?*Drw, text: ?[*:0]const u8) callconv(.C) c_uint {
+        const drw = self orelse return 0;
+        if (drw.*.fonts) |_| {} else return 0;
+        const t = text orelse return 0;
+        return @bitCast(drw_text(drw, 0, 0, 0, 0, 0, t, 0));
+    }
+    pub fn fontsetGetWidthClamp(self: ?*Drw, text: ?[*:0]const u8, n: c_uint) callconv(.C) c_uint {
+        var tmp: c_uint = 0;
+        if (self != null and self.?.*.fonts != null and n != @intFromBool(false)) {
+            tmp = @bitCast(drw_text(self, 0, 0, 0, 0, 0, text, @bitCast(n)));
+        }
+        return @min(n, tmp);
+    }
 };
-
+extern fn drw_text(drw: ?*Drw, x: c_int, y: c_int, w: c_uint, h: c_uint, lpad: c_uint, text: ?[*:0]const u8, invert: c_int) c_int;
 comptime {
     @export(Drw.create, .{ .name = "drw_create" });
     @export(Drw.free, .{ .name = "drw_free" });
@@ -241,4 +261,6 @@ comptime {
     @export(Drw.setFontSet, .{ .name = "drw_setfontset" });
     @export(Drw.rect, .{ .name = "drw_rect" });
     @export(Drw.map, .{ .name = "drw_map" });
+    @export(Drw.fontsetGetWidth, .{ .name = "drw_fontset_getwidth" });
+    @export(Drw.fontsetGetWidthClamp, .{ .name = "drw_fontset_getwidth_clamp" });
 }
