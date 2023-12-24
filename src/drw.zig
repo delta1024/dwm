@@ -67,12 +67,16 @@ pub const Fnt = extern struct {
         };
         return font;
     }
-    pub fn fontGetExts(self: ?*Fnt, text: ?[*:0]const u8, len: c_uint, w: ?*c_uint, h: ?*c_uint) callconv(.C) void {
-        _ = h;
-        _ = w;
-        _ = len;
-        _ = text;
-        _ = self;
+    pub fn getExts(self: ?*Fnt, text: ?[*:0]const u8, len: c_uint, w: ?*c_uint, h: ?*c_uint) callconv(.C) void {
+        var ext: x11.XGlyphInfo = undefined;
+        if (self == null or text == null) return;
+        x11.XftTextExtentsUtf8(self.?.*.dpy, self.?.*.xfont, @as([*]const x11.XftChar8, @ptrCast(@alignCast(text))), @bitCast(len), &ext);
+        if (w) |w_| {
+            w_.* = @bitCast(@as(c_int, ext.xOff));
+        }
+        if (h) |h_| {
+            h_.* = self.?.*.h;
+        }
     }
     fn free(self: ?*Fnt) callconv(.C) void {
         if (self) |_| {
@@ -263,4 +267,5 @@ comptime {
     @export(Drw.map, .{ .name = "drw_map" });
     @export(Drw.fontsetGetWidth, .{ .name = "drw_fontset_getwidth" });
     @export(Drw.fontsetGetWidthClamp, .{ .name = "drw_fontset_getwidth_clamp" });
+    @export(Fnt.getExts, .{ .name = "drw_font_getexts" });
 }

@@ -411,20 +411,20 @@ no_match:
 /* 	return MIN(n, tmp); */
 /* } */
 
-void
-drw_font_getexts(Fnt *font, const char *text, unsigned int len, unsigned int *w, unsigned int *h)
-{
-	XGlyphInfo ext;
+/* void */
+/* drw_font_getexts(Fnt *font, const char *text, unsigned int len, unsigned int *w, unsigned int *h) */
+/* { */
+/* 	XGlyphInfo ext; */
 
-	if (!font || !text)
-		return;
+/* 	if (!font || !text) */
+/* 		return; */
 
-	XftTextExtentsUtf8(font->dpy, font->xfont, (XftChar8 *)text, len, &ext);
-	if (w)
-		*w = ext.xOff;
-	if (h)
-		*h = font->h;
-}
+/* 	XftTextExtentsUtf8(font->dpy, font->xfont, (XftChar8 *)text, len, &ext); */
+/* 	if (w) */
+/* 		*w = ext.xOff; */
+/* 	if (h) */
+/* 		*h = font->h; */
+/* } */
 
 /* Cur * */
 /* drw_cur_create(Drw *drw, int shape) */
