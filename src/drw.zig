@@ -216,6 +216,13 @@ pub const Drw = extern struct {
         else
             x11.XDrawRectangle(drw.?.*.dpy, drw.?.*.drawable, drw.?.*.gc, x, y, w - 1, h - 1);
     }
+
+    pub fn map(_drw: ?*Drw, win: Window, x: c_int, y: c_int, w: c_uint, h: c_uint) callconv(.C) void {
+        if (_drw == null) return;
+        const drw = _drw.?;
+        _ = x11.XCopyArea(drw.*.dpy, drw.*.drawable, win, drw.*.gc, x, y, w, h, x, y);
+        _ = x11.XSync(drw.*.dpy, x11.False);
+    }
 };
 
 comptime {
@@ -233,4 +240,5 @@ comptime {
     @export(Drw.setScheme, .{ .name = "drw_setscheme" });
     @export(Drw.setFontSet, .{ .name = "drw_setfontset" });
     @export(Drw.rect, .{ .name = "drw_rect" });
+    @export(Drw.map, .{ .name = "drw_map" });
 }
